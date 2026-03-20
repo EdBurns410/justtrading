@@ -10,6 +10,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import router
+from app.api.bot_routes import router as bot_mgmt_router
+from app.api.settings_routes import router as settings_router
 from app.api.websocket import ws_router, broadcast_event
 from app.config.settings import settings
 from app.execution.oanda_adapter import OANDAExecutionAdapter
@@ -91,6 +93,8 @@ app.add_middleware(
 )
 
 app.include_router(router, prefix="/api")
+app.include_router(bot_mgmt_router, prefix="/api/manage")
+app.include_router(settings_router, prefix="/api")
 app.include_router(ws_router, prefix="/api")
 
 

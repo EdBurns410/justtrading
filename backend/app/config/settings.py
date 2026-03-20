@@ -96,6 +96,24 @@ class RiskSettings(BaseSettings):
     min_margin_pct: float = 50.0
 
 
+class SupabaseSettings(BaseSettings):
+    """Supabase authentication configuration."""
+
+    model_config = {"env_prefix": "SUPABASE_"}
+
+    url: str = ""
+    anon_key: str = ""
+    jwt_secret: str = ""
+
+
+class EncryptionSettings(BaseSettings):
+    """Encryption settings for API key storage."""
+
+    model_config = {"env_prefix": "ENCRYPTION_"}
+
+    key: str = ""  # Fernet key for encrypting stored API keys
+
+
 class Settings(BaseSettings):
     """Application settings."""
 
@@ -112,6 +130,8 @@ class Settings(BaseSettings):
     database: DatabaseSettings = Field(default_factory=DatabaseSettings)
     redis: RedisSettings = Field(default_factory=RedisSettings)
     risk: RiskSettings = Field(default_factory=RiskSettings)
+    supabase: SupabaseSettings = Field(default_factory=SupabaseSettings)
+    encryption: EncryptionSettings = Field(default_factory=EncryptionSettings)
 
 
 settings = Settings()

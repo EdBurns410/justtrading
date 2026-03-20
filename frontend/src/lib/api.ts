@@ -1,12 +1,29 @@
+import { supabase } from "./supabase";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
 
+async function getAuthHeaders(): Promise<Record<string, string>> {
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (token) {
+    return { Authorization: `Bearer ${token}` };
+  }
+  return {};
+}
+
 export async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  const authHeaders = await getAuthHeaders();
   const res = await fetch(`${API_BASE}${path}`, {
-    headers: { "Content-Type": "application/json", ...options?.headers },
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders,
+      ...options?.headers,
+    },
     ...options,
   });
   if (!res.ok) {
-    throw new Error(`API error: ${res.status} ${res.statusText}`);
+    const body = await res.text().catch(() => "");
+    throw new Error(`API error: ${res.status} ${res.statusText} ${body}`);
   }
   return res.json();
 }
@@ -86,6 +103,17 @@ export interface BotRecord {
   created_at: string;
 }
 
+export interface BotDetailRecord extends BotRecord {
+  allowed_sessions: string[] | null;
+  parameters: Record<string, unknown> | null;
+  confidence_threshold: number | null;
+  max_spread_pips: number | null;
+  max_slippage_pips: number | null;
+  max_concurrent_exposure: number | null;
+  alerting_configured: boolean;
+  updated_at: string;
+}
+
 export interface RecentTrade {
   id: string;
   instrument: string;
@@ -97,4 +125,20 @@ export interface RecentTrade {
   bot_id: string | null;
   confidence: number | null;
   reason: string | null;
+}
+
+export interface ApiKeysStatus {
+  oanda_api_token_set: boolean;
+  oanda_account_id_set: boolean;
+  oanda_is_live: boolean;
+  perigon_api_key_set: boolean;
+  finnhub_api_key_set: boolean;
+}
+
+export interface ApiKeysMasked {
+  oanda_api_token: string;
+  oanda_account_id: string;
+  oanda_is_live: boolean;
+  perigon_api_key: string;
+  finnhub_api_key: string;
 }

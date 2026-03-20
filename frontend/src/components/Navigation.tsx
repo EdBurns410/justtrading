@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: "grid" },
@@ -11,6 +12,7 @@ const navItems = [
   { href: "/trades", label: "Trades", icon: "trending-up" },
   { href: "/risk", label: "Risk Monitor", icon: "shield" },
   { href: "/promotions", label: "Promotion Pipeline", icon: "git-merge" },
+  { href: "/settings", label: "Settings", icon: "settings" },
 ];
 
 const icons: Record<string, string> = {
@@ -20,10 +22,12 @@ const icons: Record<string, string> = {
   "trending-up": "M23 6l-9.5 9.5-5-5L1 18",
   shield: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z",
   "git-merge": "M18 21a3 3 0 100-6 3 3 0 000 6zM6 9a3 3 0 100-6 3 3 0 000 6zm0 0v12",
+  settings: "M12 15a3 3 0 100-6 3 3 0 000 6z M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z",
 };
 
 export function Navigation() {
   const pathname = usePathname();
+  const { user, signOut } = useAuth();
 
   return (
     <nav className="fixed left-0 top-0 flex h-screen w-56 flex-col border-r border-gray-800 bg-bg-secondary">
@@ -62,6 +66,17 @@ export function Navigation() {
       </div>
 
       <div className="border-t border-gray-800 p-4">
+        {user && (
+          <div className="mb-3">
+            <p className="truncate text-xs text-text-secondary">{user.email}</p>
+            <button
+              onClick={signOut}
+              className="mt-1 text-xs text-text-muted hover:text-red-400"
+            >
+              Sign out
+            </button>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-accent-green" />
           <span className="text-xs text-text-muted">System Online</span>
