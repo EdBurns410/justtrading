@@ -4,6 +4,10 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Navigation } from "@/components/Navigation";
 import { AuthGuard } from "@/components/AuthGuard";
+import { TragonShell } from "@/components/tragon/TragonShell";
+
+// Public Tragon Bots pages — fully client-side, no login required.
+const TRAGON_ROUTES = ["/lab", "/hatchery", "/leaderboard"];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -12,6 +16,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   // Login page — no nav, no auth guard
   if (pathname === "/login") {
     return <>{children}</>;
+  }
+
+  // Tragon Bots — public, mobile-first shell, no auth gate.
+  if (TRAGON_ROUTES.some((r) => pathname === r || pathname.startsWith(`${r}/`))) {
+    return <TragonShell>{children}</TragonShell>;
   }
 
   if (loading) {

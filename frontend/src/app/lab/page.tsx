@@ -13,6 +13,12 @@ import {
 } from "@/lib/engine";
 import { getChallengeBars, CHALLENGE_DATASET } from "@/lib/engine/data/challenge";
 import { EquityChart } from "@/components/lab/EquityChart";
+import {
+  loadCollection,
+  saveBot as persistBot,
+  newId,
+  type SavedBot,
+} from "@/lib/tragon/collection";
 
 const SPECIES_GLYPH: Record<string, string> = {
   fire: "🔥",
@@ -32,16 +38,6 @@ const ENTRY_KNOB: Record<string, { key: string; label: string; min: number; max:
 };
 
 const pct = (x: number) => `${(x * 100).toFixed(1)}%`;
-
-interface SavedBot {
-  id: string;
-  name: string;
-  species: string;
-  genome: Genome;
-  totalReturn: number;
-  robustness: number;
-  savedAt: number;
-}
 
 export default function LabPage() {
   const [species, setSpecies] = useState<Species>("fire");
@@ -68,12 +64,7 @@ export default function LabPage() {
   }, [species]);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("tragon_collection");
-      if (raw) setCollection(JSON.parse(raw));
-    } catch {
-      /* ignore */
-    }
+    setCollection(loadCollection());
   }, []);
 
   const genome: Genome = useMemo(() => {
@@ -104,17 +95,14 @@ export default function LabPage() {
 
   function saveBot() {
     const bot: SavedBot = {
-      id: `${species}-${Date.now()}`,
+      id: newId(String(species)),
       name: `${preset.name} Gen-1`,
-      species,
+      species: String(species),
+      generation: 1,
       genome,
-      totalReturn: m.totalReturn,
-      robustness: robustness.score,
-      savedAt: Date.now(),
+      createdAt: Date.now(),
     };
-    const next = [bot, ...collection].slice(0, 24);
-    setCollection(next);
-    localStorage.setItem("tragon_collection", JSON.stringify(next));
+    setCollection(persistBot(bot));
     setJustSaved(true);
     setTimeout(() => setJustSaved(false), 1800);
   }

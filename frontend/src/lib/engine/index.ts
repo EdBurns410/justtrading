@@ -19,6 +19,7 @@ export {
 export type { SpeciesPreset } from "./species.ts";
 export { computeRobustness } from "./robustness.ts";
 export type { RobustnessReport, WalkForwardSegment } from "./robustness.ts";
+export { leaderboardScore } from "./score.ts";
 export {
   sma,
   ema,

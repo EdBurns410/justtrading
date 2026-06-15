@@ -10,7 +10,13 @@
 // next wiring step once the Supabase project is provisioned.
 
 import { NextResponse } from "next/server";
-import { runBacktest, computeRobustness, DEFAULT_CONFIG, type Genome } from "@/lib/engine";
+import {
+  runBacktest,
+  computeRobustness,
+  leaderboardScore,
+  DEFAULT_CONFIG,
+  type Genome,
+} from "@/lib/engine";
 import { getChallengeBars, CHALLENGE_DATASET } from "@/lib/engine/data/challenge";
 
 export const runtime = "nodejs";
@@ -52,9 +58,7 @@ export async function POST(req: Request) {
   // Leaderboard score rewards risk-adjusted, robust performance — never raw
   // return alone — so overfit one-regime bots cannot dominate the board.
   const m = result.metrics;
-  const score = Number(
-    (m.totalReturn * 100 * (0.5 + 0.5 * robustness.score)).toFixed(2),
-  );
+  const score = leaderboardScore(m, robustness.score);
 
   return NextResponse.json({
     verified: true,
