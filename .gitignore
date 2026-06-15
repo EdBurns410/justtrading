@@ -30,3 +30,7 @@ pgdata/
 # OS
 .DS_Store
 Thumbs.db
+
+# Next/TS build artifacts
+next-env.d.ts
+*.tsbuildinfo

@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: "grid" },
+  { href: "/lab", label: "Strategy Lab", icon: "beaker" },
   { href: "/events", label: "Event Feed", icon: "zap" },
   { href: "/bots", label: "Strategy Bots", icon: "cpu" },
   { href: "/trades", label: "Trades", icon: "trending-up" },
@@ -17,6 +18,7 @@ const navItems = [
 
 const icons: Record<string, string> = {
   grid: "M4 4h7v7H4V4zm9 0h7v7h-7V4zm-9 9h7v7H4v-7zm9 0h7v7h-7v-7z",
+  beaker: "M9 3h6M10 3v6l-5 9a2 2 0 002 3h10a2 2 0 002-3l-5-9V3M7 14h10",
   zap: "M13 2L3 14h9l-1 10 10-12h-9l1-10z",
   cpu: "M6 4h12v12H6V4zm-2 3H2v6h2m18-6h-2v6h2M9 2v2m6-2v2m-6 16v2m6-2v2",
   "trending-up": "M23 6l-9.5 9.5-5-5L1 18",
