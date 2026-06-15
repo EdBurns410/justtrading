@@ -34,3 +34,6 @@ Thumbs.db
 # Next/TS build artifacts
 next-env.d.ts
 *.tsbuildinfo
+
+# Vercel
+.vercel
