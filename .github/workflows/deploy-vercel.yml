@@ -10,9 +10,6 @@ on:
   push:
     branches:
       - claude/tragon-bots-build-plan-tbicmh
-    paths:
-      - "frontend/**"
-      - ".github/workflows/deploy-vercel.yml"
   workflow_dispatch:
 
 jobs:
