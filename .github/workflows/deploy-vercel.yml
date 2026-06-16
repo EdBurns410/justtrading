@@ -1,0 +1,52 @@
+name: Deploy Tragon Bots to Vercel
+
+# GitHub-hosted runners can reach the Vercel API (the Claude Code sandbox
+# cannot), so the deploy happens here. Requires one repository secret:
+#   VERCEL_TOKEN  — a Vercel access token scoped to your team.
+#
+# Triggers on pushes to this branch and can also be run manually.
+
+on:
+  push:
+    branches:
+      - claude/tragon-bots-build-plan-tbicmh
+    paths:
+      - "frontend/**"
+      - ".github/workflows/deploy-vercel.yml"
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+
+      - name: Deploy frontend to Vercel (production)
+        working-directory: frontend
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          set -e
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::error::VERCEL_TOKEN secret is not set. Add it in Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          # Link (creating it if needed) to a project named tragon-bots, then
+          # deploy this directory as the project root to production.
+          vercel link --yes --project tragon-bots --token "$VERCEL_TOKEN" || true
+          URL=$(vercel deploy --prod --yes --token "$VERCEL_TOKEN")
+          echo "Deployed: $URL"
+          {
+            echo "## ✅ Tragon Bots deployed"
+            echo ""
+            echo "**Live URL:** $URL"
+            echo ""
+            echo "- [Lab]($URL/lab) · [Hatchery]($URL/hatchery) · [Leaderboard]($URL/leaderboard)"
+          } >> "$GITHUB_STEP_SUMMARY"
